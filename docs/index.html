@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensaje de Amor</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+        }
+        .led-panel {
+            display: grid;
+            grid-template-columns: repeat(32, 20px);
+            grid-template-rows: repeat(8, 20px);
+            gap: 5px;
+        }
+        .led {
+            width: 20px;
+            height: 20px;
+            background-color: #111;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+        .led.on.red { background-color: rgb(255, 0, 0); }
+        .led.on.green { background-color: rgb(0, 255, 0); }
+        .led.on.blue { background-color: rgb(0, 0, 255); }
+        .led.on.yellow { background-color: rgb(255, 255, 0); }
+        .led.on.purple { background-color: rgb(128, 0, 128); }
+        .led.on.white { background-color: rgb(255, 255, 255); }
+    </style>
+</head>
+<body>
+    <div class="led-panel" id="ledPanel"></div>
+
+    <script>
+        const ledPanel = document.getElementById('ledPanel');
+
+        for (let i = 0; i < 256; i++) {
+            const led = document.createElement('div');
+            led.classList.add('led');
+            ledPanel.appendChild(led);
+        }
+
+        const alphabetPatterns = {
+            'A': ["00011000", "00100100", "01000010", "01000010", "01111110", "01000010", "01000010", "01000010"],
+            'B': ["01111100", "01000010", "01000010", "01111100", "01000010", "01000010", "01000010", "01111100"],
+            'C': ["00111100", "01000010", "01000000", "01000000", "01000000", "01000000", "01000010", "00111100"],
+            'D': ["01111000", "01000100", "01000010", "01000010", "01000010", "01000010", "01000100", "01111000"],
+            'E': ["01111110", "01000000", "01000000", "01111100", "01000000", "01000000", "01000000", "01111110"],
+            'F': ["01111110", "01000000", "01000000", "01111100", "01000000", "01000000", "01000000", "01000000"],
+            'G': ["00111100", "01000010", "01000000", "01000000", "01001110", "01000010", "01000010", "00111100"],
+            'H': ["01000010", "01000010", "01000010", "01111110", "01000010", "01000010", "01000010", "01000010"],
+            'I': ["00111100", "00011000", "00011000", "00011000", "00011000", "00011000", "00011000", "00111100"],
+            'J': ["00011110", "00000100", "00000100", "00000100", "00000100", "01000100", "01000100", "00111000"],
+            'K': ["01000010", "01000100", "01001000", "01110000", "01001000", "01000100", "01000010", "01000010"],
+            'L': ["01000000", "01000000", "01000000", "01000000", "01000000", "01000000", "01000000", "01111110"],
+            'M': ["01000010", "01100110", "01011010", "01000010", "01000010", "01000010", "01000010", "01000010"],
+            'N': ["01000010", "01100010", "01010010", "01001010", "01000110", "01000010", "01000010", "01000010"],
+            'Ñ': ["01000010", "01100010", "01010010", "01001010", "01000110", "01000010", "01000010", "01000010"],
+            'O': ["00111100", "01000010", "01000010", "01000010", "01000010", "01000010", "01000010", "00111100"],
+            'P': ["01111100", "01000010", "01000010", "01111100", "01000000", "01000000", "01000000", "01000000"],
+            'Q': ["00111100", "01000010", "01000010", "01000010", "01001010", "01000110", "00111110", "00000001"],
+            'R': ["01111100", "01000010", "01000010", "01111100", "01001000", "01000100", "01000010", "01000010"],
+            'S': ["00111110", "01000000", "01000000", "00111100", "00000010", "00000010", "00000010", "01111100"],
+            'T': ["01111110", "00011000", "00011000", "00011000", "00011000", "00011000", "00011000", "00011000"],
+            'U': ["01000010", "01000010", "01000010", "01000010", "01000010", "01000010", "01000010", "00111100"],
+            'V': ["01000010", "01000010", "01000010", "01000010", "01000010", "01000010", "00100100", "00011000"],
+            'W': ["01000010", "01000010", "01000010", "01000010", "01011010", "01100110", "01000010", "01000010"],
+            'X': ["01000010", "00100100", "00011000", "00011000", "00011000", "00100100", "01000010", "01000010"],
+            'Y': ["01000010", "01000010", "01000010", "00111100", "00011000", "00011000", "00011000", "00011000"],
+            'Z': ["01111110", "00000010", "00000100", "00001000", "00010000", "00100000", "01000000", "01111110"],
+            ' ': ["00000000", "00000000", "00000000", "00000000", "00000000", "00000000", "00000000", "00000000"],
+            'heart': ["00000000", "01100110", "11111111", "11111111", "11111111", "01111110", "00111100", "00011000"],
+            'sun': ["00000000", "00111000", "01111100", "11111110", "11111110", "01111100", "00111000", "00000000"],
+            'star': ["00011000", "00111100", "11111111", "01111110", "11111111", "00111100", "00011000", "00000000"]
+        };
+
+        const message = "AIDA TE AMO ♥ ERES MI SOL ☼ Y MI UNIVERSO";
+        const colors = ["yellow", "green", "red", "blue", "purple", "red", "green", "blue", "yellow", "purple"];
+
+        let currentOffset = -32;
+
+        function displayMessage() {
+            const leds = document.querySelectorAll('.led');
+            let displayPattern = Array(8).fill("00000000000000000000000000000000");
+
+            for (let i = 0; i < 32; i++) {
+                let currentCharIndex = Math.floor((currentOffset + i) / 8);
+                let currentColumn = (currentOffset + i) % 8;
+
+                if (currentCharIndex >= 0 && currentCharIndex < message.length) {
+                    let char = message[currentCharIndex];
+                    let charPattern;
+                    let colorClass = 'white';
+
+                    if (char === '♥') {
+                        charPattern = alphabetPatterns['heart'];
+                        colorClass = 'red';
+                    } else if (char === '☼') {
+                        charPattern = alphabetPatterns['sun'];
+                        colorClass = 'yellow';
+                    } else if (char === '★') {
+                        charPattern = alphabetPatterns['star'];
+                        colorClass = 'blue';
+                    } else {
+                        charPattern = alphabetPatterns[char] || alphabetPatterns[' '];
+                        let wordIndex = getWordIndex(currentCharIndex);
+                        colorClass = colors[wordIndex];
+                    }
+
+                    for (let row = 0; row < 8; row++) {
+                        displayPattern[row] = displayPattern[row].substring(0, i) +
+                                              charPattern[row][currentColumn] +
+                                              displayPattern[row].substring(i + 1);
+                    }
+                }
+            }
+
+            displayPattern.forEach((row, rowIndex) => {
+                for (let colIndex = 0; colIndex < 32; colIndex++) {
+                    const ledIndex = rowIndex * 32 + colIndex;
+                    leds[ledIndex].className = 'led';
+                    if (row[colIndex] === '1') {
+                        let currentCharIndex = Math.floor((currentOffset + colIndex) / 8);
+                        let colorClass = 'white';
+                        if (currentCharIndex >= 0 && currentCharIndex < message.length) {
+                            let char = message[currentCharIndex];
+                            if (char === '♥') {
+                                colorClass = 'red';
+                            } else if (char === '☼') {
+                                colorClass = 'yellow';
+                            } else if (char === '★') {
+                                colorClass = 'blue';
+                            } else {
+                                let wordIndex = getWordIndex(currentCharIndex);
+                                colorClass = colors[wordIndex];
+                            }
+                        }
+                        leds[ledIndex].classList.add('on', colorClass);
+                    }
+                }
+            });
+
+            currentOffset++;
+            if (currentOffset > message.length * 8 + 32) {
+                currentOffset = -32;
+            }
+        }
+
+        function getWordIndex(charIndex) {
+            const wordsBoundary = [0, 3, 7, 12, 18, 21, 24, 26, 35];
+            for (let i = 0; i < wordsBoundary.length - 1; i++) {
+                if (charIndex >= wordsBoundary[i] && charIndex < wordsBoundary[i + 1]) {
+                    return i;
+                }
+            }
+            return wordsBoundary.length - 1;
+        }
+
+        setInterval(displayMessage, 100); // Cambia cada 100 ms para un desplazamiento suave
+    </script>
+</body>
+</html>
